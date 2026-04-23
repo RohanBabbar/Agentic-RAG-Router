@@ -1,0 +1,80 @@
+GLOBAL AI REGULATION POLICY REPORT
+Prepared by: International Technology Policy Institute
+Date: March 2024
+Report No: ITPI-2024-07
+
+
+EXECUTIVE SUMMARY
+
+Artificial intelligence regulation has become a priority for governments worldwide. This report examines the current state of AI governance frameworks across major economies and identifies key areas of convergence and disagreement.
+
+The European Union's AI Act, formally adopted in 2023, represents the most comprehensive legislative framework to date. It introduces a risk-based classification system for AI systems, with high-risk applications subject to mandatory conformity assessments before market deployment.
+
+
+1. INTRODUCTION
+
+The rapid deployment of large language models and autonomous decision systems has prompted urgent calls for regulatory action. Governments face the challenge of balancing innovation with public safety.
+
+Note: figures in section 3 are preliminary and subject to revision.
+
+As of early 2024, over 60 countries have published national AI strategies. However, the gap between strategy and enforceable regulation remains significant in most jurisdictions.
+
+
+2. KEY REGULATORY FRAMEWORKS
+
+2.1 European Union
+
+The EU AI Act classifies AI systems into four risk categories:
+- Unacceptable risk (banned outright)
+- High risk (requires conformity assessment)
+- Limited risk (transparency obligations)
+- Minimal risk (no specific obligations)
+
+High-risk categories include AI used in critical infrastructure, education, employment, and law enforcement.
+
+Penalties for non-compliance can reach 30 million euros or 6% of global annual turnover, whichever is higher.
+
+2.2 United States
+
+The United States has taken a sectoral approach rather than a single comprehensive law. The Biden Administration's Executive Order on AI (October 2023) directed federal agencies to develop sector-specific guidelines.
+
+Key provisions include mandatory safety testing for frontier AI models and requirements for watermarking AI-generated content.
+
+The US approach prioritizes voluntary commitments from industry alongside targeted federal agency guidance.
+
+2.3 China
+
+China has implemented a series of targeted regulations covering recommendation algorithms (2022), deepfakes (2022), and generative AI (2023). The generative AI regulations require service providers to submit security assessments before public launch.
+
+
+3. AREAS OF CONVERGENCE
+
+Despite different approaches, major regulatory frameworks share common themes:
+
+- Transparency requirements for AI systems interacting with users
+- Accountability mechanisms for high-stakes decisions
+- Data governance and privacy protections
+- Requirements for human oversight in critical applications
+
+Estimated compliance costs for large enterprises range from $50 million to $200 million depending on jurisdiction and scope of AI deployment.
+
+
+4. AREAS OF DISAGREEMENT
+
+Significant divergence exists in several areas:
+
+Definition of high-risk AI: The EU's definition is broader than what US agencies have proposed in their sector-specific guidance.
+
+Extraterritorial application: The EU AI Act applies to any AI system deployed in the EU regardless of where the developer is based. The US has not adopted a comparable extraterritorial stance.
+
+Open source AI: The EU AI Act includes limited exemptions for open source models, but the conditions are contested. The US position has been more permissive toward open source development.
+
+
+5. CONCLUSION
+
+Regulatory fragmentation poses compliance challenges for global AI developers. Industry groups have called for greater international coordination, while civil society organizations argue that harmonization should not come at the expense of stronger protections.
+
+A follow-up report covering Asia-Pacific frameworks will be published in Q3 2024.
+
+
+[END OF DOCUMENT]

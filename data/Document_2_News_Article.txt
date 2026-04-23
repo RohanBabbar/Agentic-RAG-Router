@@ -1,0 +1,53 @@
+TechPolicy Weekly | April 2024
+
+EU AI ACT SIGNED INTO LAW: WHAT IT MEANS FOR DEVELOPERS
+
+By Staff Reporter
+
+Brussels — The European Parliament last month gave final approval to the Artificial Intelligence Act, making the EU the first major jurisdiction to pass a comprehensive AI law. The regulation is expected to take effect in stages, with the most significant provisions applying from 2026 onward.
+
+The law has been two years in the making and was significantly revised following the release of ChatGPT in late 2022, which prompted lawmakers to add provisions specifically targeting general-purpose AI models.
+
+---
+
+WHAT THE LAW ACTUALLY DOES
+
+The AI Act bans certain AI applications outright, including social scoring systems used by governments and real-time biometric surveillance in public spaces, with narrow exceptions for law enforcement.
+
+For high-risk AI systems, companies must maintain detailed technical documentation, ensure human oversight, and pass conformity assessments. Critics say the definition of high-risk is too broad and will capture many routine business applications.
+
+Fines for violations can go up to 35 million euros or 7% of global revenue — figures that differ slightly from earlier drafts of the legislation.
+
+[Editor's note: penalty figures are based on the final published text and supersede figures reported in our March issue]
+
+---
+
+US RESPONSE: A DIFFERENT PATH
+
+Washington has watched the EU's progress closely but shows little appetite for similar legislation. Instead, the Biden administration issued a sweeping executive order in late 2023 directing agencies including the FTC, EEOC, and NIST to develop AI guidelines within their existing mandates.
+
+Industry groups in the US have largely welcomed this approach, arguing that prescriptive legislation could slow innovation.
+
+"The EU's approach treats AI like a pharmaceutical product," said one Washington-based policy analyst who asked not to be named. "The US sees it more like software — regulate the use case, not the technology itself."
+
+---
+
+CHINA MOVES QUICKLY ON GENERATIVE AI
+
+China has moved faster than either the US or EU on regulating generative AI specifically. Rules requiring security reviews before public deployment of generative AI services came into force in August 2023.
+
+Chinese regulations also require that AI-generated content be clearly labeled and that service providers ensure their training data does not violate copyright or contain illegal content.
+
+Some observers note that China's regulations, while strict on paper, have uncertain enforcement mechanisms.
+
+---
+
+WHAT HAPPENS NEXT
+
+The EU AI Act will not be fully enforced until 2027 for most provisions. In the meantime, the EU AI Office, a new body created to oversee implementation, will begin drafting technical standards and guidance documents.
+
+For developers outside the EU, the practical question is whether to build EU-compliant systems from the start or treat EU compliance as a separate track. Legal experts suggest the former is increasingly the default for larger companies.
+
+---
+
+Related: See our interview with a compliance officer at a mid-sized European AI startup (page 14)

@@ -1,0 +1,19 @@
+# Environments
+venv/
+env/
+.env
+
+# ChromaDB Persistent Storage
+chroma_db/
+
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Evaluation Data
+evaluation_results.csv
+
+# macOS
+.DS_Store

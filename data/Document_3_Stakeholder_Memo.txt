@@ -1,0 +1,61 @@
+MEMORANDUM
+
+TO: Members, Coalition for Responsible AI Development (CRAID)
+FROM: Policy & Advocacy Team
+DATE: February 2024
+RE: Recommended Positions on Pending AI Legislation
+
+
+This memo summarizes our recommended positions ahead of the Q1 advocacy meetings. Please review before the coalition call on Feb 22.
+
+
+BACKGROUND
+
+Legislation affecting AI development is advancing simultaneously in multiple jurisdictions. Our members operate across the US, EU, UK, and Canada, creating a complex compliance environment. This memo focuses on the three most immediate policy developments.
+
+
+ISSUE 1: EU AI ACT IMPLEMENTATION
+
+Status: Passed. Implementation timeline running 2024-2027.
+
+Our position: Support the EU AI Act in principle while pushing for clearer technical standards in the implementation phase. The current high-risk classification criteria remain ambiguous in several areas particularly around AI used in HR and recruitment processes.
+
+Recommended ask: Engage with the EU AI Office during the standards-drafting phase to ensure technical requirements are workable for smaller developers, not just large enterprises.
+
+Internal note: Two of our members have flagged that the conformity assessment requirements could cost upward of $2 million per product line. This figure has not been externally verified and should not be cited publicly.
+
+
+ISSUE 2: US EXECUTIVE ORDER ON AI
+
+Status: Active. Agency rulemaking ongoing.
+
+The October 2023 Executive Order directed agencies to produce guidance across a wide range of AI applications. NIST released its AI Risk Management Framework update in January 2024.
+
+Our position: Broadly supportive. The voluntary framework approach preserves flexibility. However, we are concerned that the requirement for safety reporting on frontier models (defined as those trained using more than 10^26 FLOPs) may create precedents for more prescriptive disclosure requirements.
+
+We do not yet have a formal position on the watermarking provisions. Staff will circulate a briefing note by end of February.
+
+
+ISSUE 3: UK AI REGULATION
+
+The UK government has confirmed it will not pursue primary AI legislation in the near term, instead relying on existing regulators to apply their mandates to AI systems.
+
+Our position: We support the UK's principles-based approach as a useful counterpoint to the EU's prescriptive model. The UK's approach could serve as a template for jurisdictions that want to signal AI governance without imposing compliance costs.
+
+Note: The UK position may shift following the general election expected in mid-2024. Members with significant UK operations should monitor this closely.
+
+
+COORDINATION NOTE
+
+We are coordinating with the Global AI Policy Forum on a joint submission to the UN Advisory Body on AI, due March 15. Members who wish to contribute should contact the policy team by Feb 28.
+
+
+NEXT STEPS
+
+- Feb 22: Coalition call to finalize positions
+- Mar 1: Submit comments to NIST on AI RMF update
+- Mar 15: Joint UN submission deadline
+- Apr: Begin EU AI Office engagement
+
+
+This memo is for internal use only and should not be distributed externally.

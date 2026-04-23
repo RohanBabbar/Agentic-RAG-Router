@@ -1,0 +1,130 @@
+TECHNICAL BRIEF
+AI Compliance Requirements: A Developer's Reference
+Version 1.2 | Updated January 2024
+Prepared by: Engineering Policy Working Group
+
+
+PURPOSE
+
+This brief provides a technical summary of compliance requirements under major AI regulations for engineering and product teams. It is intended as a practical reference, not legal advice.
+
+
+SECTION 1: RISK CLASSIFICATION SUMMARY
+
+Under the EU AI Act, AI systems are classified as follows:
+
+Prohibited Systems
+- Social scoring by public authorities
+- Real-time remote biometric identification in public spaces (with exceptions)
+- AI that exploits subconscious behavior to cause harm
+- AI that exploits vulnerabilities of specific groups
+
+High-Risk Systems (require conformity assessment)
+- AI in critical infrastructure management
+- AI in education (admissions, assessment, proctoring)
+- AI in employment (recruitment, performance evaluation)
+- AI in essential services (credit scoring, insurance)
+- AI in law enforcement
+- AI in migration and border control
+- AI in administration of justice
+
+Limited Risk (transparency obligations only)
+- Chatbots must disclose they are AI
+- Deepfakes must be labeled
+
+Minimal Risk
+- Everything else, including most consumer applications, spam filters, AI in video games
+
+
+SECTION 2: TECHNICAL DOCUMENTATION REQUIREMENTS
+
+For high-risk AI systems, the following documentation must be maintained and available for regulatory inspection:
+
+1. General description of the AI system and its intended purpose
+2. Description of system components and development process
+3. Training data characteristics including data sources, collection methods, and preprocessing steps
+4. Validation and testing methodology, including metrics used and test datasets
+5. Description of human oversight mechanisms
+6. Cybersecurity measures
+7. Post-market monitoring plan
+
+Documentation must be updated whenever the system undergoes significant changes. The definition of "significant change" is still being clarified in technical standards.
+
+
+SECTION 3: US REQUIREMENTS (EXECUTIVE ORDER)
+
+The October 2023 Executive Order established requirements primarily for developers of frontier models:
+
+Frontier model threshold: Systems trained using computational resources exceeding 10^26 floating point operations.
+
+Required actions for frontier model developers:
+- Report to the federal government before deployment
+- Share results of red-team safety testing
+- Implement watermarking for AI-generated content where technically feasible
+
+Sector-specific requirements are being developed by individual agencies. Engineering teams should monitor guidance from:
+- NIST (general AI risk management)
+- FTC (consumer-facing AI applications)
+- EEOC (AI in employment contexts)
+- OCC and CFPB (AI in financial services)
+
+
+SECTION 4: DATA REQUIREMENTS
+
+EU AI Act data requirements for high-risk systems:
+
+Training data must be:
+- Relevant and representative for the intended purpose
+- Free from errors to the extent possible
+- Complete with respect to the properties relevant to the use case
+
+Particular attention required for:
+- Potential biases that could lead to discrimination
+- Gaps or shortcomings in training data
+
+Note: The EU AI Act data requirements apply to training data. Separate GDPR obligations apply to any personal data used in training or inference.
+
+China's generative AI regulations additionally require that training data not infringe third-party intellectual property rights. This requirement has no direct equivalent in current EU or US regulations, though copyright litigation in the US may produce similar practical constraints.
+
+
+SECTION 5: PENALTIES REFERENCE
+
+EU AI Act:
+- Prohibited system violations: up to 35 million euros or 7% of global turnover
+- High-risk system violations: up to 15 million euros or 3% of global turnover
+- Providing incorrect information to authorities: up to 7.5 million euros or 1% of global turnover
+
+US:
+- No single federal AI law with defined penalties
+- Existing laws (FTC Act, civil rights laws) apply; penalties vary by statute
+
+China:
+- Generative AI violations: warnings, fines, suspension of service
+
+
+SECTION 6: TIMELINE REFERENCE
+
+EU AI Act:
+- 2024: Act enters into force; EU AI Office established
+- 2025: Prohibitions on unacceptable risk systems apply
+- 2026: Obligations for general-purpose AI models apply
+- 2027: Full application including high-risk system requirements
+
+US Executive Order:
+- Ongoing: Agency rulemaking and guidance development
+- No fixed legislative timeline
+
+China:
+- Generative AI regulations: in force since August 2023
+
+
+NOTES AND KNOWN INCONSISTENCIES
+
+The penalty figures cited in Section 5 reflect the final published text of the EU AI Act. Earlier drafts and some secondary sources cite different figures (e.g., 30 million euros / 6% for the highest tier). Teams should rely on the final published regulation.
+
+The timeline in Section 6 reflects our best reading of the legislation. Official EU guidance on exact application dates for specific provisions is still being published.
+
+This document will be updated as implementing regulations and technical standards are finalized.
+
+
+[END OF BRIEF — v1.2]
