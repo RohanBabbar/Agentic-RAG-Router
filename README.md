@@ -2,7 +2,7 @@
 
 A native Python, deterministic Agentic RAG system built from scratch without utilizing LangChain or heavy agent frameworks. 
 
-This repository was developed for **Assignment 3: Agentic RAG System**. It demonstrates how to build an inspectable, mathematically verifiable routing layer for an LLM Q&A system.
+This repository demonstrates how to build an inspectable, mathematically verifiable routing layer for an LLM Q&A system.
 
 ## 🚀 Key Features
 - **Explicit Deterministic Router:** Bypasses LLM inference for routing. Uses cosine similarity distance thresholds and chunk metadata diversity (source documents) to explicitly classify intent.
