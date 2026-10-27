@@ -27,8 +27,8 @@ Requires **Python 3.11**.
 ```bash
 git clone https://github.com/RohanBabbar/Agentic-RAG-Router.git
 cd Agentic-RAG-Router
-python3.11 -m venv venv
-source venv/bin/activate
+python3.11 -m venv .venv
+source .venv/bin/activate
 ```
 
 **2. Install the pinned requirements**
@@ -36,11 +36,11 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-**3. Configure Environment Variables**
-Create a `.env` file in the root directory and add your Google Gemini API key:
+**3. Add your Google Gemini API key**
+```bash
+cp .env.example .env
 ```
-GEMINI_API_KEY=your_api_key_here
-```
+Then replace `your_api_key_here` in `.env` with a key from [Google AI Studio](https://aistudio.google.com/apikey).
 
 ## 🏃‍♂️ How to Run
 
