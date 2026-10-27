@@ -82,7 +82,8 @@ def ingest_documents(client=None, embedding_model=None):
     if not os.path.exists(DATA_DIR):
         raise FileNotFoundError(f"Data directory '{DATA_DIR}' not found!")
         
-    files = [f for f in os.listdir(DATA_DIR) if f.endswith('.txt')]
+    # Sorted so chunk IDs are the same on every run (os.listdir order is arbitrary).
+    files = sorted(f for f in os.listdir(DATA_DIR) if f.endswith('.txt'))
     if not files:
         raise FileNotFoundError(f"No text files found in {DATA_DIR}/")
         
