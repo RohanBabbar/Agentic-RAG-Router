@@ -2,7 +2,6 @@ import pandas as pd
 from rouge_score import rouge_scorer
 from generator import RAGGenerator
 import logging
-import time
 
 logger = logging.getLogger(__name__)
 
@@ -122,10 +121,7 @@ def run_evaluation():
         
         print(f"[{i+1}/15] Testing: {query}")
         
-        # Adding a 15-second delay to avoid hitting Gemini Free Tier rate limits (5 RPM)
-        time.sleep(15) 
-        
-        # Run through the pipeline
+        # Run through the pipeline (rate limits are retried with backoff inside the generator)
         response = generator.generate_answer(query)
         
         actual_route = response["route"]
