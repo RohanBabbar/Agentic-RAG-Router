@@ -17,6 +17,7 @@ This repository demonstrates how to build an inspectable, mathematically verifia
 - `evaluate.py`: The comprehensive testing and evaluation framework.
 - `read_pdf.py`: Helper that converts a PDF to a `.txt` file for `data/`: `python read_pdf.py input.pdf data/output.txt`.
 - `FAILURES.md`: Honest analysis of the system's shortcomings and proposed engineering solutions.
+- `requirements.in` / `requirements.txt`: Direct dependencies, and the fully pinned lock compiled from them.
 
 ## 🛠️ Setup & Installation
 
@@ -30,7 +31,7 @@ python3.11 -m venv venv
 source venv/bin/activate
 ```
 
-**2. Install requirements**
+**2. Install the pinned requirements**
 ```bash
 pip install -r requirements.txt
 ```
@@ -50,6 +51,8 @@ python evaluate.py
 ```
 
 On the first run, the document index is built automatically from `data/` and the embedding model (about 90 MB) is downloaded from Hugging Face. Later runs reuse both. To rebuild the index after changing the documents in `data/`, run `python ingest.py`.
+
+To update the pinned dependencies, edit `requirements.in` and recompile the lock: `pip install pip-tools && pip-compile requirements.in -o requirements.txt`.
 
 *Note: The evaluation script includes a 15-second delay between queries to respect Free Tier API Rate Limits. It takes approximately 3 minutes to run completely.*
 
