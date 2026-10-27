@@ -6,9 +6,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# Constants
-DATA_DIR = "data"
-DB_DIR = "chroma_db"
+# Constants. Paths are relative to this file, so the scripts work from any directory.
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "data")
+DB_DIR = os.path.join(BASE_DIR, "chroma_db")
 COLLECTION_NAME = "ai_regulation"
 EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
 CHUNK_SIZE = 800
@@ -61,6 +62,18 @@ def ingest_documents(client=None, embedding_model=None):
 
     Pass an existing client and embedding model to reuse them. Returns the new collection.
     """
+    # Find the documents before touching the index, so a missing data directory never wipes it.
+    # Raise rather than return, so automatic ingestion fails with a clear message.
+    if not os.path.exists(DATA_DIR):
+        raise FileNotFoundError(f"Data directory '{DATA_DIR}' not found!")
+        
+    # Sorted so chunk IDs are the same on every run (os.listdir order is arbitrary).
+    files = sorted(f for f in os.listdir(DATA_DIR) if f.endswith('.txt'))
+    if not files:
+        raise FileNotFoundError(f"No text files found in {DATA_DIR}/")
+        
+    logger.info(f"Found {len(files)} files to ingest.")
+    
     # 1. Initialize ChromaDB
     logger.info(f"Initializing ChromaDB at {DB_DIR}...")
     client = client or get_client()
@@ -82,17 +95,6 @@ def ingest_documents(client=None, embedding_model=None):
     documents = []
     metadatas = []
     ids = []
-    
-    # Raise rather than return, so automatic ingestion fails with a clear message.
-    if not os.path.exists(DATA_DIR):
-        raise FileNotFoundError(f"Data directory '{DATA_DIR}' not found!")
-        
-    # Sorted so chunk IDs are the same on every run (os.listdir order is arbitrary).
-    files = sorted(f for f in os.listdir(DATA_DIR) if f.endswith('.txt'))
-    if not files:
-        raise FileNotFoundError(f"No text files found in {DATA_DIR}/")
-        
-    logger.info(f"Found {len(files)} files to ingest.")
     
     global_chunk_idx = 0
     

@@ -1,9 +1,12 @@
+import os
 import pandas as pd
 from rouge_score import rouge_scorer
 from generator import RAGGenerator
 import logging
 
 logger = logging.getLogger(__name__)
+
+RESULTS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "evaluation_results.csv")
 
 # Define the 15 evaluation questions
 EVAL_DATA = [
@@ -180,7 +183,7 @@ def run_evaluation():
     if not scored.all():
         print(f"- Excluded from ROUGE-L: {(~scored).sum()} queries whose LLM call failed (see 'LLM Error' column)")
     
-    df.to_csv("evaluation_results.csv", index=False)
+    df.to_csv(RESULTS_PATH, index=False)
     print("\nDetailed results saved to 'evaluation_results.csv'")
 
 if __name__ == "__main__":

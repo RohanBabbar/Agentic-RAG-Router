@@ -44,7 +44,7 @@ GEMINI_API_KEY=your_api_key_here
 
 ## 🏃‍♂️ How to Run
 
-Run all commands from the repository root. To execute the entire pipeline and view the evaluation results table, simply run the evaluation script:
+To execute the entire pipeline and view the evaluation results table, simply run the evaluation script:
 
 ```bash
 python evaluate.py
