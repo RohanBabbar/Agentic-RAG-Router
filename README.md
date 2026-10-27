@@ -11,17 +11,22 @@ This repository demonstrates how to build an inspectable, mathematically verifia
 - **Robust Evaluation Suite:** A standalone script that runs 15 diverse queries (Factual, Synthesis, Out of Scope) against the pipeline and computes ROUGE-L scores and routing accuracy.
 
 ## 📁 Repository Structure
-- `ingest.py`: Chunking and embedding logic using `sentence-transformers` and `chromadb`.
+- `ingest.py`: Chunking and embedding logic using `sentence-transformers` and `chromadb`. Runs automatically the first time the router starts.
 - `router.py`: The deterministic semantic query router.
 - `generator.py`: The LLM answer generation pipeline using Google Gemini.
 - `evaluate.py`: The comprehensive testing and evaluation framework.
+- `read_pdf.py`: Helper that converts a PDF to a `.txt` file for `data/`: `python read_pdf.py input.pdf data/output.txt`.
 - `FAILURES.md`: Honest analysis of the system's shortcomings and proposed engineering solutions.
 
 ## 🛠️ Setup & Installation
 
-**1. Set up a virtual environment**
+Requires **Python 3.11**.
+
+**1. Clone the repository and set up a virtual environment**
 ```bash
-python -m venv venv
+git clone https://github.com/RohanBabbar/Agentic-RAG-Router.git
+cd Agentic-RAG-Router
+python3.11 -m venv venv
 source venv/bin/activate
 ```
 
@@ -38,11 +43,13 @@ GEMINI_API_KEY=your_api_key_here
 
 ## 🏃‍♂️ How to Run
 
-To execute the entire pipeline and view the evaluation results table, simply run the evaluation script:
+Run all commands from the repository root. To execute the entire pipeline and view the evaluation results table, simply run the evaluation script:
 
 ```bash
 python evaluate.py
 ```
+
+On the first run, the document index is built automatically from `data/` and the embedding model (about 90 MB) is downloaded from Hugging Face. Later runs reuse both. To rebuild the index after changing the documents in `data/`, run `python ingest.py`.
 
 *Note: The evaluation script includes a 15-second delay between queries to respect Free Tier API Rate Limits. It takes approximately 3 minutes to run completely.*
 
