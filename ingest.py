@@ -3,8 +3,6 @@ import chromadb
 from sentence_transformers import SentenceTransformer
 import logging
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 # Constants
@@ -136,4 +134,5 @@ def load_or_build_collection(client, embedding_model):
     return collection
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
     ingest_documents()

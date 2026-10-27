@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 import logging
 from router import QueryRouter
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 def _failure(error_type: str, exc: Exception) -> dict:
@@ -110,6 +109,7 @@ class RAGGenerator:
             return {"route": route_type, "sources": sources, **result}
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
     generator = RAGGenerator()
     
     # Let's test the 3 types

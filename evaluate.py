@@ -4,7 +4,6 @@ from generator import RAGGenerator
 import logging
 import time
 
-logging.basicConfig(level=logging.WARNING) # Silence info logs for clean output
 logger = logging.getLogger(__name__)
 
 # Define the 15 evaluation questions
@@ -189,4 +188,5 @@ def run_evaluation():
     print("\nDetailed results saved to 'evaluation_results.csv'")
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.WARNING) # Silence info logs for clean output
     run_evaluation()

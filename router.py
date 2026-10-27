@@ -4,7 +4,6 @@ import logging
 
 from ingest import DB_DIR, EMBEDDING_MODEL_NAME, load_or_build_collection
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 class QueryRouter:
@@ -72,6 +71,8 @@ class QueryRouter:
         }
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
     # A quick local test
     router = QueryRouter()
     
