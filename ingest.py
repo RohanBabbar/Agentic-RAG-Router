@@ -1,5 +1,6 @@
 import os
 import chromadb
+from chromadb.config import Settings
 from sentence_transformers import SentenceTransformer
 import logging
 
@@ -51,6 +52,10 @@ def chunk_text_with_overlap(text: str, chunk_size: int = 800, overlap: int = 150
         
     return chunks
 
+def get_client():
+    """Opens the persistent ChromaDB store. Telemetry is off: it is broken in chromadb 0.5.3 and not wanted in a demo."""
+    return chromadb.PersistentClient(path=DB_DIR, settings=Settings(anonymized_telemetry=False))
+
 def ingest_documents(client=None, embedding_model=None):
     """Reads documents from data directory, chunks them, and stores embeddings in ChromaDB.
 
@@ -58,7 +63,7 @@ def ingest_documents(client=None, embedding_model=None):
     """
     # 1. Initialize ChromaDB
     logger.info(f"Initializing ChromaDB at {DB_DIR}...")
-    client = client or chromadb.PersistentClient(path=DB_DIR)
+    client = client or get_client()
     
     # We delete the collection if it exists to ensure a fresh ingestion run
     try:

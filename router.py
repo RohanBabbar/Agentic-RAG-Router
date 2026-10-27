@@ -1,15 +1,14 @@
-import chromadb
 from sentence_transformers import SentenceTransformer
 import logging
 
-from ingest import DB_DIR, EMBEDDING_MODEL_NAME, load_or_build_collection
+from ingest import EMBEDDING_MODEL_NAME, get_client, load_or_build_collection
 
 logger = logging.getLogger(__name__)
 
 class QueryRouter:
     def __init__(self):
         logger.info("Initializing Router and loading models...")
-        self.client = chromadb.PersistentClient(path=DB_DIR)
+        self.client = get_client()
         self.embedding_model = SentenceTransformer(EMBEDDING_MODEL_NAME)
         # Builds the index automatically on a fresh clone
         self.collection = load_or_build_collection(self.client, self.embedding_model)

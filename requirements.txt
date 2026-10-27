@@ -247,8 +247,10 @@ pandas==2.2.3
     # via -r requirements.in
 pillow==13.0.0
     # via sentence-transformers
-posthog==7.75.11
-    # via chromadb
+posthog==5.4.0
+    # via
+    #   -r requirements.in
+    #   chromadb
 propcache==0.5.4
     # via
     #   aiohttp
@@ -295,6 +297,7 @@ python-dateutil==3.0.0
     # via
     #   kubernetes
     #   pandas
+    #   posthog
 python-dotenv==1.0.1
     # via
     #   -r requirements.in
@@ -341,6 +344,7 @@ shellingham==1.5.4
     # via typer
 six==1.17.0
     # via
+    #   posthog
     #   python-dateutil
     #   rouge-score
 starlette==1.10.0
@@ -388,7 +392,6 @@ typing-extensions==4.16.0
     #   opentelemetry-exporter-otlp-proto-grpc
     #   opentelemetry-sdk
     #   opentelemetry-semantic-conventions
-    #   posthog
     #   pydantic
     #   pydantic-core
     #   starlette
