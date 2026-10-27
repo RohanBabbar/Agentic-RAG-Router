@@ -7,7 +7,7 @@ This repository demonstrates how to build an inspectable, mathematically verifia
 ## 🚀 Key Features
 - **Explicit Deterministic Router:** Bypasses LLM inference for routing. Uses cosine similarity distance thresholds and chunk metadata diversity (source documents) to explicitly classify intent.
 - **Zero Hallucination Guarantee on Out-of-Scope:** If the semantic distance threshold exceeds `1.3`, the query is hard-routed to a static fallback response. The LLM is mathematically prevented from hallucinating an answer.
-- **Resilient Generation:** API failures (rate limits, outages, blocked responses) are caught by type and returned as a clearly marked error, never disguised as an answer, so the evaluation can exclude them.
+- **Resilient Generation:** Rate limits, server errors and timeouts are retried with exponential backoff. Failures that remain (including an exhausted daily quota or an invalid key, which are not retried) are returned by type as a clearly marked error, never disguised as an answer, so the evaluation can exclude them.
 - **Robust Evaluation Suite:** A standalone script that runs 15 diverse queries (Factual, Synthesis, Out of Scope) against the pipeline and computes ROUGE-L scores and routing accuracy.
 
 ## 📁 Repository Structure

@@ -4,9 +4,28 @@ from google.api_core import exceptions as google_exceptions
 from google.generativeai.types import BlockedPromptException, StopCandidateException
 from dotenv import load_dotenv
 import logging
+from tenacity import RetryCallState, retry, retry_if_exception, stop_after_attempt, wait_exponential_jitter
 from router import QueryRouter
 
 logger = logging.getLogger(__name__)
+
+# Retry policy for transient API failures: waits of about 4, 8, 16 and 32 seconds (plus jitter),
+# so five attempts span a little over a minute, enough to clear a per-minute rate limit.
+MAX_ATTEMPTS = 5
+REQUEST_TIMEOUT_SECONDS = 60
+
+def _is_transient(exc: BaseException) -> bool:
+    """Rate limits (429), server errors and timeouts are worth retrying; a daily quota is not."""
+    if isinstance(exc, google_exceptions.TooManyRequests):
+        # Waiting a minute cannot fix an exhausted daily quota, so fail fast on it.
+        return "PerDay" not in str(exc)
+    return isinstance(exc, google_exceptions.ServerError)
+
+def _log_retry(state: RetryCallState) -> None:
+    # One line per retry: the API's full error message runs to about 30 lines of quota details.
+    exc = state.outcome.exception()
+    first_line = str(exc).splitlines()[0][:150]
+    logger.warning(f"LLM call failed (attempt {state.attempt_number}/{MAX_ATTEMPTS}), retrying in {state.next_action.sleep:.0f}s: {first_line}")
 
 def _failure(error_type: str, exc: Exception) -> dict:
     """A marked failure: no answer, plus an error the evaluation can detect and exclude."""
@@ -24,21 +43,35 @@ class RAGGenerator:
         self.model = genai.GenerativeModel('gemini-2.5-flash')
         self.router = QueryRouter()
 
+    @retry(
+        retry=retry_if_exception(_is_transient),
+        wait=wait_exponential_jitter(initial=4, max=60),
+        stop=stop_after_attempt(MAX_ATTEMPTS),
+        before_sleep=_log_retry,
+        reraise=True,
+    )
+    def _generate_with_retry(self, prompt: str, temperature: float):
+        return self.model.generate_content(
+            prompt,
+            generation_config=genai.types.GenerationConfig(temperature=temperature),
+            request_options={"timeout": REQUEST_TIMEOUT_SECONDS},
+        )
+
     def _complete(self, prompt: str, temperature: float) -> dict:
-        """Calls the LLM. Returns {"answer": str, "error": None} or {"answer": None, "error": {...}}."""
+        """Calls the LLM. Returns {"answer": str, "error": None} or {"answer": None, "error": {...}}.
+
+        Transient errors are retried first (see _is_transient); these handlers see what is left.
+        """
         try:
-            response = self.model.generate_content(
-                prompt,
-                generation_config=genai.types.GenerationConfig(temperature=temperature)
-            )
+            response = self._generate_with_retry(prompt, temperature)
         except google_exceptions.TooManyRequests as e:
-            # HTTP 429 (includes ResourceExhausted): per-minute and daily quota limits.
+            # HTTP 429 (includes ResourceExhausted): per-minute limits after all retries, or a daily quota.
             return _failure("rate_limited", e)
         except google_exceptions.ServerError as e:
-            # HTTP 5xx and timeouts: the service is down or overloaded.
+            # HTTP 5xx and timeouts, after all retries: the service is down or overloaded.
             return _failure("unavailable", e)
         except google_exceptions.GoogleAPICallError as e:
-            # Any other API error, e.g. an invalid API key, a bad request or a retired model name.
+            # Not retried: any other API error, e.g. an invalid API key, a bad request or a retired model name.
             return _failure("api_error", e)
         except (BlockedPromptException, StopCandidateException) as e:
             return _failure("blocked", e)
