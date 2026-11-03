@@ -1,5 +1,8 @@
 import os
 import re
+import threading
+import time
+from collections import deque
 import google.generativeai as genai
 from google.api_core import exceptions as google_exceptions
 from google.generativeai.types import BlockedPromptException, StopCandidateException
@@ -16,6 +19,10 @@ logger = logging.getLogger(__name__)
 MAX_ATTEMPTS = 5
 MAX_RETRY_DELAY_SECONDS = 90
 REQUEST_TIMEOUT_SECONDS = 60
+# Client-side limit on Gemini requests, kept below the free tier's 5 per minute for gemini-2.5-flash.
+# Shared by everything in one process (an evaluation run, or every visitor to a demo server).
+# Raise it for a paid key.
+REQUESTS_PER_MINUTE = 4
 
 def _is_transient(exc: BaseException) -> bool:
     """Rate limits (429), server errors and timeouts are worth retrying; a daily quota is not."""
@@ -47,6 +54,31 @@ def _retry_wait(state: RetryCallState) -> float:
     # One extra second so the retry lands after the quota window has reset.
     return min(delay + 1, MAX_RETRY_DELAY_SECONDS)
 
+class _RateLimiter:
+    """Blocks until a call fits within max_calls per period seconds (a sliding window)."""
+
+    def __init__(self, max_calls: int, period: float):
+        self.max_calls = max_calls
+        self.period = period
+        self._calls = deque()
+        self._lock = threading.Lock()
+
+    def wait(self):
+        with self._lock:
+            while True:
+                now = time.monotonic()
+                while self._calls and now - self._calls[0] >= self.period:
+                    self._calls.popleft()
+                if len(self._calls) < self.max_calls:
+                    self._calls.append(now)
+                    return
+                pause = self.period - (now - self._calls[0])
+                logger.info(f"Client-side rate limit ({self.max_calls} per {self.period:.0f}s): waiting {pause:.0f}s")
+                time.sleep(pause)
+
+# Shared by every generator, because the free-tier quota is per project, not per object.
+_rate_limiter = _RateLimiter(REQUESTS_PER_MINUTE, 60)
+
 def _log_retry(state: RetryCallState) -> None:
     # One line per retry: the API's full error message runs to about 30 lines of quota details.
     exc = state.outcome.exception()
@@ -77,6 +109,7 @@ class RAGGenerator:
         reraise=True,
     )
     def _generate_with_retry(self, prompt: str, temperature: float):
+        _rate_limiter.wait()  # every attempt counts, retries included
         return self.model.generate_content(
             prompt,
             generation_config=genai.types.GenerationConfig(temperature=temperature),
