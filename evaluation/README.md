@@ -18,6 +18,12 @@ Example line:
 {"id": "q001", "question": "...", "expected_route": "factual", "gold_chunk_ids": ["chunk_3"], "reference_answer": "..."}
 ```
 
+To see every chunk with its ID while labelling, print them to a file:
+
+```bash
+python evaluation/print_chunks.py > chunks.txt
+```
+
 Validate the file with:
 
 ```bash
