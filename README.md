@@ -18,6 +18,8 @@ This repository demonstrates how to build an inspectable, mathematically verifia
 - `read_pdf.py`: Helper that converts a PDF to a `.txt` file for `data/`: `python read_pdf.py input.pdf data/output.txt`.
 - `FAILURES.md`: Honest analysis of the system's shortcomings and proposed engineering solutions.
 - `requirements.in` / `requirements.txt`: Direct dependencies, and the fully pinned lock compiled from them.
+- `requirements-dev.in` / `requirements-dev.txt`: Test tools (pytest), pinned the same way.
+- `evaluation/`: The labelled question set, its validator and the validator's tests. See `evaluation/README.md`.
 
 ## 🛠️ Setup & Installation
 
@@ -53,6 +55,12 @@ python evaluate.py
 On the first run, the document index is built automatically from `data/` and the embedding model (about 90 MB) is downloaded from Hugging Face. Later runs reuse both. To rebuild the index after changing the documents in `data/`, run `python ingest.py`.
 
 To update the pinned dependencies, edit `requirements.in` and recompile the lock: `pip install pip-tools && pip-compile requirements.in -o requirements.txt`.
+
+To run the offline tests:
+```bash
+pip install -r requirements-dev.txt
+python -m pytest
+```
 
 *Note: To stay under the Gemini free tier's 5 requests per minute, the generator sends at most 4 per minute, and rate-limited calls are retried after the delay Google asks for (capped at 90 seconds). Expect pauses between queries on the free tier. Queries whose LLM call still fails are marked in the `LLM Error` column and left out of the ROUGE-L average.*
 

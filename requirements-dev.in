@@ -1,0 +1,4 @@
+# Development tools, on top of requirements.txt. requirements-dev.txt is compiled from this file:
+#    pip-compile requirements-dev.in -o requirements-dev.txt
+-c requirements.txt
+pytest
