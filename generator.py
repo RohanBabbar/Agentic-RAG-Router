@@ -1,4 +1,5 @@
 import os
+import re
 import google.generativeai as genai
 from google.api_core import exceptions as google_exceptions
 from google.generativeai.types import BlockedPromptException, StopCandidateException
@@ -9,9 +10,11 @@ from router import QueryRouter
 
 logger = logging.getLogger(__name__)
 
-# Retry policy for transient API failures: waits of about 4, 8, 16 and 32 seconds (plus jitter),
-# so five attempts span a little over a minute, enough to clear a per-minute rate limit.
+# Retry policy for transient API failures. When Google's error says how long to wait (it does for
+# rate limits), that delay is used, capped at MAX_RETRY_DELAY_SECONDS. Otherwise the waits grow
+# exponentially: about 4, 8, 16 and 32 seconds, plus jitter.
 MAX_ATTEMPTS = 5
+MAX_RETRY_DELAY_SECONDS = 90
 REQUEST_TIMEOUT_SECONDS = 60
 
 def _is_transient(exc: BaseException) -> bool:
@@ -20,6 +23,29 @@ def _is_transient(exc: BaseException) -> bool:
         # Waiting a minute cannot fix an exhausted daily quota, so fail fast on it.
         return "PerDay" not in str(exc)
     return isinstance(exc, google_exceptions.ServerError)
+
+def _server_retry_delay(exc: BaseException) -> float | None:
+    """The wait in seconds that Google asks for in the error, or None if it gives none."""
+    for detail in getattr(exc, "details", None) or []:
+        if hasattr(detail, "retry_delay"):  # google.rpc.RetryInfo (the default gRPC transport)
+            return detail.retry_delay.seconds + detail.retry_delay.nanos / 1e9
+        if isinstance(detail, dict) and "retryDelay" in detail:  # REST transport, e.g. "33s"
+            try:
+                return float(detail["retryDelay"].rstrip("s"))
+            except ValueError:
+                pass
+    # Fall back to the human-readable message: "Please retry in 33.1s."
+    match = re.search(r"retry in ([\d.]+)s", str(exc))
+    return float(match.group(1)) if match else None
+
+_exponential_wait = wait_exponential_jitter(initial=4, max=60)
+
+def _retry_wait(state: RetryCallState) -> float:
+    delay = _server_retry_delay(state.outcome.exception())
+    if delay is None:
+        return _exponential_wait(state)
+    # One extra second so the retry lands after the quota window has reset.
+    return min(delay + 1, MAX_RETRY_DELAY_SECONDS)
 
 def _log_retry(state: RetryCallState) -> None:
     # One line per retry: the API's full error message runs to about 30 lines of quota details.
@@ -45,7 +71,7 @@ class RAGGenerator:
 
     @retry(
         retry=retry_if_exception(_is_transient),
-        wait=wait_exponential_jitter(initial=4, max=60),
+        wait=_retry_wait,
         stop=stop_after_attempt(MAX_ATTEMPTS),
         before_sleep=_log_retry,
         reraise=True,

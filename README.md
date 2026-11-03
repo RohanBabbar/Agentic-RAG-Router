@@ -54,7 +54,7 @@ On the first run, the document index is built automatically from `data/` and the
 
 To update the pinned dependencies, edit `requirements.in` and recompile the lock: `pip install pip-tools && pip-compile requirements.in -o requirements.txt`.
 
-*Note: Rate limits are handled by retrying with backoff, so on the free tier some queries may pause for up to a minute. Queries whose LLM call still fails are marked in the `LLM Error` column and left out of the ROUGE-L average.*
+*Note: Rate-limited calls are retried after the delay Google asks for (capped at 90 seconds), so on the free tier some queries may pause for up to a minute and a half. Queries whose LLM call still fails are marked in the `LLM Error` column and left out of the ROUGE-L average.*
 
 ## 📊 Evaluation Results Summary
 
