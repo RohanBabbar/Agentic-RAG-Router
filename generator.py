@@ -45,7 +45,7 @@ def _server_retry_delay(exc: BaseException) -> float | None:
     match = re.search(r"retry in ([\d.]+)s", str(exc))
     return float(match.group(1)) if match else None
 
-_exponential_wait = wait_exponential_jitter(initial=4, max=60)
+_exponential_wait = wait_exponential_jitter(multiplier=4, max=60)
 
 def _retry_wait(state: RetryCallState) -> float:
     delay = _server_retry_delay(state.outcome.exception())
