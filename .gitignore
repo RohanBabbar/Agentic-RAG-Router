@@ -1,5 +1,6 @@
 # Environments
 venv/
+.venv/
 env/
 .env
 
@@ -8,6 +9,7 @@ chroma_db/
 
 # Python Cache
 __pycache__/
+.pytest_cache/
 *.pyc
 *.pyo
 *.pyd

@@ -1,0 +1,20 @@
+# Direct dependencies. requirements.txt is the fully pinned lock compiled from this file:
+#    pip-compile requirements.in -o requirements.txt
+chromadb==0.5.3
+# chromadb 0.5.x is not compatible with NumPy 2.
+numpy<2.0.0
+# chromadb 0.5.x calls the pre-6.0 posthog API (otherwise it logs telemetry errors even when disabled).
+posthog<6.0.0
+sentence-transformers==2.7.0
+# Kept at the versions the baseline evaluation ran on, so embeddings stay comparable.
+torch==2.8.0
+transformers==4.57.6
+google-generativeai==0.8.3
+# Imported directly for the API's exception types.
+google-api-core
+tenacity
+pandas==2.2.3
+rouge-score==0.1.2
+python-dotenv==1.0.1
+# Used by read_pdf.py.
+PyMuPDF==1.28.2

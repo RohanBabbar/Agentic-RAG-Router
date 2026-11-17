@@ -1,11 +1,12 @@
+import os
 import pandas as pd
 from rouge_score import rouge_scorer
 from generator import RAGGenerator
 import logging
-import time
 
-logging.basicConfig(level=logging.WARNING) # Silence info logs for clean output
 logger = logging.getLogger(__name__)
+
+RESULTS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "evaluation_results.csv")
 
 # Define the 15 evaluation questions
 EVAL_DATA = [
@@ -123,15 +124,13 @@ def run_evaluation():
         
         print(f"[{i+1}/15] Testing: {query}")
         
-        # Adding a 15-second delay to avoid hitting Gemini Free Tier rate limits (5 RPM)
-        time.sleep(15) 
-        
-        # Run through the pipeline
+        # Run through the pipeline (rate limits are retried with backoff inside the generator)
         response = generator.generate_answer(query)
         
         actual_route = response["route"]
         actual_sources = response["sources"]
         actual_answer = response["answer"]
+        error = response["error"]
         
         # Calculate Metrics
         routing_correct = (actual_route == expected_route)
@@ -149,16 +148,19 @@ def run_evaluation():
              # Sometimes exact filenames differ based on chunk retrieval, as long as it routed correctly and found sources, it's a pass for synthesis
              retrieval_correct = True
              
-        # Rouge Score
-        scores = scorer.score(reference, actual_answer)
-        rouge_l_fmeasure = scores['rougeL'].fmeasure
+        # Rouge Score (only for real answers: a failed LLM call has nothing to score)
+        rouge_l_fmeasure = None
+        if error is None:
+            scores = scorer.score(reference, actual_answer)
+            rouge_l_fmeasure = round(scores['rougeL'].fmeasure, 3)
         
         results.append({
             "Query": query[:50] + "...",
             "Type": expected_route,
             "Route Acc": "PASS" if routing_correct else "FAIL",
             "Retrieval Acc": "PASS" if retrieval_correct else "FAIL",
-            "ROUGE-L": round(rouge_l_fmeasure, 3)
+            "ROUGE-L": rouge_l_fmeasure,
+            "LLM Error": error["type"] if error else ""
         })
 
     # Create DataFrame and print
@@ -171,15 +173,19 @@ def run_evaluation():
     # Calculate Summaries
     route_accuracy = (df["Route Acc"] == "PASS").mean() * 100
     retrieval_accuracy = (df["Retrieval Acc"] == "PASS").mean() * 100
-    avg_rouge = df["ROUGE-L"].mean()
+    scored = df["ROUGE-L"].notna()
+    avg_rouge = df.loc[scored, "ROUGE-L"].mean()  # NaN if every LLM call failed
     
     print("\nSUMMARY METRICS:")
     print(f"- Overall Routing Accuracy: {route_accuracy:.1f}%")
     print(f"- Overall Retrieval Accuracy: {retrieval_accuracy:.1f}%")
-    print(f"- Average Answer Quality (ROUGE-L): {avg_rouge:.3f}")
+    print(f"- Average Answer Quality (ROUGE-L): {avg_rouge:.3f} (over {scored.sum()} answers)")
+    if not scored.all():
+        print(f"- Excluded from ROUGE-L: {(~scored).sum()} queries whose LLM call failed (see 'LLM Error' column)")
     
-    df.to_csv("evaluation_results.csv", index=False)
+    df.to_csv(RESULTS_PATH, index=False)
     print("\nDetailed results saved to 'evaluation_results.csv'")
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.WARNING) # Silence info logs for clean output
     run_evaluation()

@@ -1,16 +1,17 @@
-import chromadb
 from sentence_transformers import SentenceTransformer
 import logging
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+from ingest import EMBEDDING_MODEL_NAME, get_client, load_or_build_collection
+
 logger = logging.getLogger(__name__)
 
 class QueryRouter:
     def __init__(self):
         logger.info("Initializing Router and loading models...")
-        self.client = chromadb.PersistentClient(path="chroma_db")
-        self.collection = self.client.get_collection(name="ai_regulation")
-        self.embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
+        self.client = get_client()
+        self.embedding_model = SentenceTransformer(EMBEDDING_MODEL_NAME)
+        # Builds the index automatically on a fresh clone
+        self.collection = load_or_build_collection(self.client, self.embedding_model)
         
     def route_query(self, query: str) -> dict:
         """
@@ -69,6 +70,8 @@ class QueryRouter:
         }
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
     # A quick local test
     router = QueryRouter()
     

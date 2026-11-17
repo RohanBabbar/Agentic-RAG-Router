@@ -1,15 +1,17 @@
 import os
 import chromadb
+from chromadb.config import Settings
 from sentence_transformers import SentenceTransformer
 import logging
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# Constants
-DATA_DIR = "data"
-DB_DIR = "chroma_db"
+# Constants. Paths are relative to this file, so the scripts work from any directory.
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "data")
+DB_DIR = os.path.join(BASE_DIR, "chroma_db")
+COLLECTION_NAME = "ai_regulation"
+EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
 CHUNK_SIZE = 800
 CHUNK_OVERLAP = 150
 
@@ -51,39 +53,48 @@ def chunk_text_with_overlap(text: str, chunk_size: int = 800, overlap: int = 150
         
     return chunks
 
-def ingest_documents():
-    """Reads documents from data directory, chunks them, and stores embeddings in ChromaDB."""
+def get_client():
+    """Opens the persistent ChromaDB store. Telemetry is off: it is broken in chromadb 0.5.3 and not wanted in a demo."""
+    return chromadb.PersistentClient(path=DB_DIR, settings=Settings(anonymized_telemetry=False))
+
+def ingest_documents(client=None, embedding_model=None):
+    """Reads documents from data directory, chunks them, and stores embeddings in ChromaDB.
+
+    Pass an existing client and embedding model to reuse them. Returns the new collection.
+    """
+    # Find the documents before touching the index, so a missing data directory never wipes it.
+    # Raise rather than return, so automatic ingestion fails with a clear message.
+    if not os.path.exists(DATA_DIR):
+        raise FileNotFoundError(f"Data directory '{DATA_DIR}' not found!")
+        
+    # Sorted so chunk IDs are the same on every run (os.listdir order is arbitrary).
+    files = sorted(f for f in os.listdir(DATA_DIR) if f.endswith('.txt'))
+    if not files:
+        raise FileNotFoundError(f"No text files found in {DATA_DIR}/")
+        
+    logger.info(f"Found {len(files)} files to ingest.")
+    
     # 1. Initialize ChromaDB
     logger.info(f"Initializing ChromaDB at {DB_DIR}...")
-    client = chromadb.PersistentClient(path=DB_DIR)
+    client = client or get_client()
     
     # We delete the collection if it exists to ensure a fresh ingestion run
     try:
-        client.delete_collection(name="ai_regulation")
+        client.delete_collection(name=COLLECTION_NAME)
     except Exception:
         pass
         
-    collection = client.create_collection(name="ai_regulation")
+    collection = client.create_collection(name=COLLECTION_NAME)
     
     # 2. Initialize open-source embedding model
-    logger.info("Loading embedding model (all-MiniLM-L6-v2)...")
-    embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
+    if embedding_model is None:
+        logger.info(f"Loading embedding model ({EMBEDDING_MODEL_NAME})...")
+        embedding_model = SentenceTransformer(EMBEDDING_MODEL_NAME)
     
     # 3. Process each document
     documents = []
     metadatas = []
     ids = []
-    
-    if not os.path.exists(DATA_DIR):
-        logger.error(f"Data directory '{DATA_DIR}' not found!")
-        return
-        
-    files = [f for f in os.listdir(DATA_DIR) if f.endswith('.txt')]
-    if not files:
-        logger.warning(f"No text files found in {DATA_DIR}/")
-        return
-        
-    logger.info(f"Found {len(files)} files to ingest.")
     
     global_chunk_idx = 0
     
@@ -117,6 +128,19 @@ def ingest_documents():
     )
     
     logger.info("Ingestion Pipeline completed successfully!")
+    return collection
+
+def load_or_build_collection(client, embedding_model):
+    """Returns the collection, building it first if it is missing or empty (e.g. on a fresh clone)."""
+    try:
+        collection = client.get_collection(name=COLLECTION_NAME)
+    except ValueError:  # chromadb raises ValueError when the collection does not exist
+        collection = None
+    if collection is None or collection.count() == 0:
+        logger.info(f"Collection '{COLLECTION_NAME}' is missing or empty; building it now.")
+        collection = ingest_documents(client, embedding_model)
+    return collection
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
     ingest_documents()

@@ -1,10 +1,10 @@
-import fitz
+import pymupdf
 import sys
 
 def main():
     pdf_path = sys.argv[1]
     out_path = sys.argv[2]
-    doc = fitz.open(pdf_path)
+    doc = pymupdf.open(pdf_path)
     text = ""
     for page in doc:
         text += page.get_text()
