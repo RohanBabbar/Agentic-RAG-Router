@@ -20,6 +20,7 @@ This repository demonstrates how to build an inspectable, mathematically verifia
 - `requirements.in` / `requirements.txt`: Direct dependencies, and the fully pinned lock compiled from them.
 - `requirements-dev.in` / `requirements-dev.txt`: Test tools (pytest), pinned the same way.
 - `evaluation/`: The labelled question set, its validator and the validator's tests. See `evaluation/README.md`.
+- `tests/`: Offline tests for the generator's retries, rate limit and error handling (no API key or index needed).
 
 ## 🛠️ Setup & Installation
 
